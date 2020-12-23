@@ -1,0 +1,59 @@
+"""
+Basic
+"""
+interface Node {
+    id: ID!
+}
+
+interface Connection {
+    pageInfo: PageInfo!
+    edges: [Edge]!
+    nodes: [Node]!
+}
+interface Edge {
+    cursor: String!
+    node: Node!
+}
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+scalar Time
+
+"""
+PhotoFile
+"""
+type PhotoFile implements Node {
+    id: ID!
+    filePath: String!
+    fileSize: Float!
+    fileName: String!
+    fileType: String!
+    fileHash: String!
+    metadata: PhotoMetadata
+}
+
+type PhotoFileEdge implements Edge {
+    cursor: String!
+    node: PhotoFile!
+}
+
+type PhotoFileConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [ PhotoFileEdge ]!
+    nodes: [ PhotoFile ]!
+}
+
+"""
+PhotoMetadata
+"""
+type PhotoMetadata implements Node {
+    id: ID!
+}
+
+type Query {
+    photoFile(id: ID!): PhotoFile
+    photoFiles(first: Int, after: String, last: Int, before: String): PhotoFileConnection!
+}

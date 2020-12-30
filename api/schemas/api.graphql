@@ -22,6 +22,11 @@ type PageInfo {
 }
 scalar Time
 
+enum SortOrder {
+    ascending
+    descending
+}
+
 """
 PhotoFile
 """
@@ -55,5 +60,5 @@ type PhotoMetadata implements Node {
 
 type Query {
     photoFile(id: ID!): PhotoFile
-    photoFiles(first: Int, after: String, last: Int, before: String): PhotoFileConnection!
+    photoFiles(first: Int, after: String, last: Int, before: String, sortBy: String, sortOrder: SortOrder): PhotoFileConnection!
 }

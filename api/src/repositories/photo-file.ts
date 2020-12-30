@@ -20,6 +20,11 @@ export default class PhotoFileRepository extends MongoDbRepository<PhotoFile> {
         return this.collection.findOne({_id});
     }
 
+    async findOneByFilePath(filePath: string): Promise<PhotoFile | null> {
+        const result = await this.find({filePath});
+        return result.items.length > 0 ? result.items[0] : null;
+    }
+
     async find(query: FindQuery, option?: FindOption): Promise<FindResult<PhotoFile>> {
         const { limit, skip } = PhotoFileRepository.createFindOption<PhotoFile>(option);
         const cursor = this.collection.find<PhotoFile>(query, {limit, skip});
@@ -44,10 +49,5 @@ export default class PhotoFileRepository extends MongoDbRepository<PhotoFile> {
             document,
             { upsert: false }
         );
-    }
-
-    async exists(_id: string): Promise<boolean> {
-        const cur = this.collection.find({_id});
-        return await cur.count() > 0;
     }
 }

@@ -22,7 +22,7 @@ export default class PhotoMetadataRepository extends MongoDbRepository<PhotoMeta
 
     async find(query: FindQuery, option?: FindOption) {
         const { limit, skip } = PhotoMetadataRepository.createFindOption<PhotoMetadata>(option);
-        const cursor = this.collection.find<PhotoMetadataRepository>(query, {limit, skip});
+        const cursor = this.collection.find<PhotoMetadata>(query, {limit, skip});
         const totalCount = await cursor.count();
         const items =  await cursor.toArray();
 
@@ -44,10 +44,5 @@ export default class PhotoMetadataRepository extends MongoDbRepository<PhotoMeta
             document,
             { upsert: false },
         );
-    }
-
-    async exists(_id: string): Promise<boolean> {
-        const cur = this.collection.find({_id});
-        return await cur.count() > 0;
     }
 }

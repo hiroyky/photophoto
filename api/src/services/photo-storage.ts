@@ -22,15 +22,11 @@ export default class PhotoStorageService {
         const photoMetadata = await parseExif(filePath);
 
 
-        if (!await this.photoFileRepo.exists(photoFile.id)) {
+        if (!await this.photoFileRepo.findOneByFilePath(photoFile.filePath)){
             await this.photoFileRepo.insertOne(photoFile, now);
-        } else {
-            await this.photoFileRepo.replaceOne(photoFile, now);
-        }
-
-        if (!await this.photoMetadataRepo.exists(photoMetadata.id)) {
             await this.photoMetadataRepo.insertOne(photoMetadata, now);
         } else {
+            await this.photoFileRepo.replaceOne(photoFile, now);
             await this.photoMetadataRepo.replaceOne(photoMetadata, now);
         }
     }

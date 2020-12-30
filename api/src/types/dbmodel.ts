@@ -10,7 +10,7 @@ export interface FindResult<T> {
     hasPrevious: boolean;
 }
 export  interface Node {
-    id: string;
+    id: string | number;
 }
 export interface CollectionBase {
     _id?: any;
@@ -19,7 +19,7 @@ export interface CollectionBase {
 }
 
 export interface PhotoFile extends Node {
-    id: string;
+    id: number;
     filePath: string;
     fileSize: number;
     fileName: string;
@@ -28,6 +28,6 @@ export interface PhotoFile extends Node {
 }
 
 export interface PhotoMetadata extends Node {
-    id: string;
+    id: number;
     [key:string]: any;
 }

@@ -1,7 +1,7 @@
 import {CollectionBase, FindOption, FindResult, Node} from '~/types/dbmodel';
 
 export default class MongoDbRepository<T extends Node> {
-    protected static encodeDatabaseDocument<T extends {id?: string}>(obj: T): T & CollectionBase {
+    protected static encodeDatabaseDocument<T extends {id?: string | number}>(obj: T): T & CollectionBase {
         if (!obj.id) {
             return Object.assign({}, obj);
         }

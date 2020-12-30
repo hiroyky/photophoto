@@ -1,6 +1,6 @@
 import {FindOption, FindQuery, FindResult, PhotoFile} from '~/types/dbmodel';
 import MongoDBDriver from '~/drivers/mongodb';
-import {Collection} from '~/node_modules/@types/mongodb';
+import {Collection} from 'mongodb';
 import MongoDbRepository from '.';
 import {decodeGraphqlId} from '~/util/graphql';
 

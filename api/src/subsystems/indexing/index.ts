@@ -10,6 +10,11 @@ import {SupportedExtensions} from '~/config/constants';
 const cmdOptionDef: OptionDefinition[] = [
     { name:'in', alias:'i', type: String, defaultOption: true, multiple: true }
 ];
+const mongoDb = new MongoDBDriver();
+const service = new PhotoStorageService(
+    new PhotoFileRepository(mongoDb),
+    new PhotoMetadataRepository(mongoDb),
+);
 
 async function validOptions(options: CommandLineOptions): Promise<boolean> {
     if (!options.in || options.in.length === 0) {
@@ -19,24 +24,17 @@ async function validOptions(options: CommandLineOptions): Promise<boolean> {
 }
 
 async function mainProcess(basePaths: string[]) {
-    const mongoDb = new MongoDBDriver();
-    const service = new PhotoStorageService(
-        new PhotoFileRepository(mongoDb),
-        new PhotoMetadataRepository(mongoDb),
-    );
-    await mongoDb.init();
-
     const paths = basePaths.map(p => path.isAbsolute(p) ? p : path.resolve(__dirname, p));
-    await Promise.all(paths.map(p => fs.access(p)));
 
-    await Promise.all(paths.map(async p => {
+    for (const p of paths) {
         if ((await fs.stat(p)).isDirectory()) {
-            mainProcess((await fs.readdir(p)).filter(isImageFile));
-            return;
+            const contents = await fs.readdir(p);
+            await mainProcess(contents.map(c => path.resolve(p, c)));
+            continue;
         }
 
         if (!isImageFile(p)) {
-            return;
+            continue;
         }
 
         try {
@@ -45,9 +43,7 @@ async function mainProcess(basePaths: string[]) {
         } catch(err) {
             console.error(p, err);
         }
-    }));
-
-    mongoDb.close();
+    }
 }
 
 function isImageFile(p: string) {
@@ -57,4 +53,13 @@ function isImageFile(p: string) {
 
 const options = commandLineArgs(cmdOptionDef);
 validOptions(options);
-mainProcess(options.in);
+mongoDb.init().then(async () => {
+    try {
+        await mainProcess(options.in);
+    } catch(err) {
+        console.error(err);
+    } finally {
+        mongoDb.close();
+    }
+
+});

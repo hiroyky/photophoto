@@ -1,6 +1,4 @@
 import {CollectionBase, FindOption, FindResult, Node} from '~/types/dbmodel';
-import {decodeGraphqlId, encodeGraphQlId} from '~/util/graphql';
-import {FindOneOptions} from '~/node_modules/@types/mongodb';
 
 export default class MongoDbRepository<T extends Node> {
     protected static encodeDatabaseDocument<T extends {id?: string}>(obj: T): T & CollectionBase {
@@ -8,8 +6,7 @@ export default class MongoDbRepository<T extends Node> {
             return Object.assign({}, obj);
         }
 
-        const _id = decodeGraphqlId(obj.id);
-        const dst = Object.assign({}, {_id}, obj);
+        const dst = Object.assign({}, {_id: obj.id}, obj);
         delete dst.id;
         return dst;
     }
@@ -19,8 +16,7 @@ export default class MongoDbRepository<T extends Node> {
             throw new Error();
         }
 
-        const id = encodeGraphQlId(name, obj._id);
-        const dst = Object.assign({}, {id}, obj);
+        const dst = Object.assign({}, {id: obj._id}, obj);
         delete dst._id;
         return dst;
     }

@@ -17,7 +17,7 @@ const query: QueryResolvers = {
     },
     photoFiles: async (_parent, args, _context, _info) => {
         await mongoDb.init();
-        const { items } = await photoFileRepo.find();
+        const { items } = await photoFileRepo.find({}, {});
         const nodes = items.map(NewPhotoFile);
 
         return {

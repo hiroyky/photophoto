@@ -1,7 +1,7 @@
 import 'graphql-import-node';
 import express from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
-import typeDefs from '~/schemas/api.graphql';
+import { ApolloServer } from 'apollo-server-express';
+import typeDefs from '@/schemas/api.graphql';
 import resolvers from '~/resolvers';
 
 const apolloServer = new ApolloServer({ typeDefs, resolvers });

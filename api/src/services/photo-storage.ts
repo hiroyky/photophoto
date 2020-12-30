@@ -1,10 +1,6 @@
 import PhotoMetadataRepository from '~/repositories/photo-metadata';
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import exifr from 'exifr';
-import md5 from 'md5';
-import {PhotoFile, PhotoMetadata} from '~/types/dbmodel';
 import PhotoFileRepository from '~/repositories/photo-file';
+import {abstractPhotoFile, parseExif} from '~/services/photo-parse';
 
 export default class PhotoStorageService {
     constructor(
@@ -20,33 +16,19 @@ export default class PhotoStorageService {
         // RAW画像の場合は、サムネの抽出、JPEG版も作る
         // ただし、同一ファイル名のJPEGがあるかも確認
 
-        const stat = await fs.stat(filePath);
-        const buf = await fs.readFile(filePath);
 
         // 画像ファイルの保存
-        const id = md5(filePath);
-        const photoFile: PhotoFile = {
-            id,
-            filePath,
-            fileName: path.basename(filePath),
-            fileType: path.extname(filePath),
-            fileSize: stat.size,
-            fileHash: md5(buf),
-        };
+        const photoFile = await abstractPhotoFile(filePath);
+        const photoMetadata = await parseExif(filePath);
 
-        const exif = await exifr.parse(filePath);
-        const photoMetadata: PhotoMetadata = {
-            id,
-            ...exif
-        };
 
-        if (!await this.photoFileRepo.exists(id)) {
+        if (!await this.photoFileRepo.exists(photoFile.id)) {
             await this.photoFileRepo.insertOne(photoFile, now);
         } else {
             await this.photoFileRepo.replaceOne(photoFile, now);
         }
 
-        if (!await this.photoMetadataRepo.exists(id)) {
+        if (!await this.photoMetadataRepo.exists(photoMetadata.id)) {
             await this.photoMetadataRepo.insertOne(photoMetadata, now);
         } else {
             await this.photoMetadataRepo.replaceOne(photoMetadata, now);

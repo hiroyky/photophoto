@@ -1,7 +1,7 @@
 import {FindOption, FindQuery, PhotoFile, PhotoMetadata} from '~/types/dbmodel';
 import MongoDBDriver from '~/drivers/mongodb';
 import MongoDbRepository from '.';
-import {Collection} from '~/node_modules/@types/mongodb';
+import {Collection} from 'mongodb';
 import {decodeGraphqlId} from '~/util/graphql';
 
 const collectionName = 'photoMetadata';

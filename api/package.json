@@ -5,8 +5,8 @@
   "author": "Yokoyama Hirokazu",
   "license": "AGPL3.0",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register ./index.ts",
-    "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
+    "dev": "ts-node -r tsconfig-paths/register ./src/index.ts",
+    "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore ./src",
     "gqlgen": "graphql-codegen --config codegen.yml",
     "generate": "yarn run gqlgen"
   },
@@ -30,6 +30,8 @@
   "dependencies": {
     "apollo-server-express": "^2.19.0",
     "body-parser": "^1.19.0",
+    "camelcase": "^6.2.0",
+    "camelcase-keys": "^6.2.2",
     "command-line-args": "^5.1.1",
     "dotenv": "^8.2.0",
     "exifr": "^6.0.0",
